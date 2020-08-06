@@ -10,35 +10,28 @@
 ### javascript
 
     DAD.dragedUpload({
-        element: doc.querySelectorAll(".label-image"),
-        input: doc.querySelector(".input-image"),
-        start: () => loader.classList.contains("d-none") && loader.classList.remove("d-none"),
+        element: document.querySelectorAll(".label-image"),
+        input: document.querySelector(".input-image"),
+        start: () => console.log("Start"),
         end: (res, err) => {
-            console.log(res)
             if(err === null){
-                if(imageName !== null) {
-                    imageName.innerText = res.files[0].filename;
-                }
+                console.log("Res ::: ", res);
             }else {
                 console.log("Error ::: ", err);
             }
-            !loader.classList.contains("d-none") && loader.classList.add("d-none");
         }
     });
 
     DAD.fileChange({
-        element: doc.querySelectorAll(".input-image"),
-        start: () => loader.classList.contains("d-none") && loader.classList.remove("d-none"),
+        element: document.querySelectorAll(".input-image"),
+        start: () => console.log("Start"),
         end: (res, err) => {
             if(err === null){
-                if(imageName !== null) {
-                    imageName.innerText = res.files[0].filename;
-                }
+                console.log("Res ::: ", res);
             }else {
                 console.log("Error ::: ", err);
             }
-            !loader.classList.contains("d-none") && loader.classList.add("d-none");
         }
     });
 
-    DAD.dragableContex(doc.querySelectorAll(".navbar"));
+    DAD.dragableContex(document.querySelectorAll(".navbar"));
