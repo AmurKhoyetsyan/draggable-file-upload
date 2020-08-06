@@ -2,6 +2,8 @@
 
 ## Example
 
+<img src="./example.png" alt="Drop file here draggable file upload" />
+
 ### html
 
     <label for="addFile" class="choose-file" data-content="Choose a File" multiple="true"></label>
