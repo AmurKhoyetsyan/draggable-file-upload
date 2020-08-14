@@ -27,9 +27,15 @@ let defaultProps = {
     end: undefined
 };
 
-const addClass = event =>
+const addClass = (event, tag) =>
 {
-    if(DAD.elem.drag !== null){
+    if(tag !== null && DAD.elem.drag !== null) {
+        DAD.elem.drag.forEach( item => {
+            if(item.elem === tag) {
+                !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
+            }
+        });
+    }else if(DAD.elem.drag !== null){
         DAD.elem.drag.forEach( item => {
             if(item.elem === event.target) {
                 !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
@@ -47,10 +53,10 @@ const removeClass = event =>
     }
 };
 
-const dragenter = event =>
+const dragenter = (event, tag = null) =>
 {
     event.preventDefault();
-    addClass(event);
+    addClass(event, tag);
 };
 
 const dragleave = event =>
@@ -59,10 +65,10 @@ const dragleave = event =>
     removeClass(event);
 };
 
-const dragover = event =>
+const dragover = (event, tag = null) =>
 {
     event.preventDefault();
-    addClass(event);
+    addClass(event, tag);
 };
 
 const getElemName = elem =>
@@ -246,8 +252,23 @@ const getTypeMultiple = elem => {
     return multiple;
 };
 
-const elemAddEventDraged = (element) =>
+const getAllTabsByparent = tag =>
 {
+    let all = tag.getElementsByTagName("*");
+    console.log(all);
+    for(elemnt  of all) {
+        elemnt.addEventListener('dragenter', (event) => dragenter(event, tag), false);
+        elemnt.addEventListener('dragover', (event) =>  dragover(event, tag), false);
+        elemnt.addEventListener('drop', event => {
+            event.preventDefault();
+            addFile(event, tag, "drop");
+        }, false);
+    }
+};
+
+const elemAddEventDraged = element =>
+{
+    getAllTabsByparent(element);
     element.addEventListener('dragenter', dragenter, false);
     element.addEventListener('dragleave', dragleave, false);
     element.addEventListener('dragover', dragover, false);
