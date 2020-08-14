@@ -255,7 +255,6 @@ const getTypeMultiple = elem => {
 const getAllTabsByparent = tag =>
 {
     let all = tag.getElementsByTagName("*");
-    console.log(all);
     for(elemnt  of all) {
         elemnt.addEventListener('dragenter', (event) => dragenter(event, tag), false);
         elemnt.addEventListener('dragover', (event) =>  dragover(event, tag), false);
