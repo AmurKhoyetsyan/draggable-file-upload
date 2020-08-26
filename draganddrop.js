@@ -298,8 +298,6 @@ DAD.dragedUpload = (props = defaultProps) =>
             end: props.end ? props.end : undefined
         });
         elemAddEventDraged(elem);
-    }else {
-        props.end(null, new Error("Element of undefined"));
     }
 };
 
@@ -330,8 +328,6 @@ DAD.fileChange = (props = defaultProps) =>
             event.preventDefault();
             addFile(event, elem, "change");
         }, false);
-    }else {
-        props.end(null, new Error("Element of undefined"));
     }
 };
 
