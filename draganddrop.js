@@ -1,10 +1,14 @@
-/****************************************
+/***********************************************************************
  * 
  * Copyright (c) 2020 Amur Khoyetsyan
  * 
  * The MIT License (MIT)
  * 
- *****************************************/
+ * When we bring the file closer to the installation area
+ * a new class is added to the installation section called "dragover",
+ * with which we can shape the installation area․
+ * 
+ ************************************************************************/
 
 let DAD = {
     name: "Drag And Drop",
@@ -355,7 +359,7 @@ const dragContext = event =>
     });
 };
 
-const addInOblect = elem =>
+const addInObյect = elem =>
 {
     elem.style["position"] = "fixed";
     elem.style["zIndex"] = "99";
@@ -396,10 +400,10 @@ DAD.dragableContex = elem =>
 {
     if(elem !== null && isNodelist(elem)) {
         for(item of elem) {
-            addInOblect(item);
+            addInObյect(item);
         }
     }else if(elem !== null) {
-        addInOblect(elem);
+        addInObյect(elem);
     }
 
     if(elem !== null) {

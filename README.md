@@ -12,8 +12,8 @@
 ### javascript
 
     DAD.dragedUpload({
-        element: document.querySelectorAll(".label-image"),
-        input: document.querySelector(".input-image"),
+        element: document.querySelectorAll(".choose-file"),
+        input: document.querySelector(".input-file"),
         start: () => console.log("Start"),
         end: (res, err) => {
             if(err === null){
@@ -25,7 +25,7 @@
     });
 
     DAD.fileChange({
-        element: document.querySelectorAll(".input-image"),
+        element: document.querySelectorAll(".input-file"),
         start: () => console.log("Start"),
         end: (res, err) => {
             if(err === null){
@@ -35,5 +35,7 @@
             }
         }
     });
+
+When we bring the file closer to the installation area a new class is added to the installation section called ***"dragover"***, with which we can shape the installation area․
 
     DAD.dragableContex(document.querySelectorAll(".navbar"));
