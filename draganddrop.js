@@ -396,7 +396,7 @@ const addEventDragAndDrop = () =>
     });
 };
 
-DAD.dragableContex = elem =>
+DAD.draggableContex = elem =>
 {
     if(elem !== null && isNodelist(elem)) {
         for(item of elem) {

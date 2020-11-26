@@ -38,4 +38,4 @@
 
 When we bring the file closer to the installation area a new class is added to the installation section called ***"dragover"***, with which we can shape the installation area․
 
-    DAD.dragableContex(document.querySelectorAll(".navbar"));
+    DAD.draggableContex(document.querySelectorAll(".navbar"));
