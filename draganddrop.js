@@ -303,22 +303,18 @@ const getTypeMultiple = elem => {
     return multiple;
 };
 
-const getAllTabsByparent = tag =>
+const getAllTabsByParent = tag =>
 {
     let all = tag.getElementsByTagName("*");
-    for(elemnt  of all) {
+    for(elemnt of all) {
         elemnt.addEventListener('dragenter', (event) => dragenter(event, tag), false);
-        elemnt.addEventListener('dragover', (event) =>  dragover(event, tag), false);
-        elemnt.addEventListener('drop', event => {
-            event.preventDefault();
-            addFile(event, tag, "drop");
-        }, false);
+        elemnt.addEventListener('dragover', (event) =>  dragover(event, tag), false);  
     }
 };
 
 const elemAddEventDraged = element =>
 {
-    getAllTabsByparent(element);
+    getAllTabsByParent(element);
     element.addEventListener('dragenter', dragenter, false);
     element.addEventListener('dragleave', dragleave, false);
     element.addEventListener('dragover', dragover, false);
