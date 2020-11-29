@@ -31,18 +31,46 @@ let defaultProps = {
     end: undefined
 };
 
+const isEmpty = (elem, callback) => {
+    if(Array.isArray(elem)) {
+        if(elem.length === 0) {
+            callback(new Error("Not a File"));
+            return true;
+        }
+
+        return false;
+    }
+
+    try {
+       let keys = Object.keys(elem);
+
+       if(keys.length === 0) {
+            callback(new Error("Not a File"));
+           return true;
+       }
+
+       return false;
+    }catch (error) {
+        callback(new TypeError('Is not a array or object'));
+    }
+
+    return false;
+};
+
 const addClass = (event, tag) =>
 {
     if(tag !== null && DAD.elem.drag !== null) {
         DAD.elem.drag.forEach( item => {
             if(item.elem === tag) {
                 !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
+                return true;
             }
         });
     }else if(DAD.elem.drag !== null){
         DAD.elem.drag.forEach( item => {
             if(item.elem === event.target) {
                 !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
+                return true;
             }
         });
     }
@@ -148,10 +176,27 @@ const addFile = (event, element, type) =>
     DAD.data.files = [];
 
     removeClass(event);
+
     if(type === "drop"){
         DAD.file = event.dataTransfer.files;
     }else {
         DAD.file = event.target.files;
+    }
+
+    if(isEmpty(DAD.file, (err) => {
+        if(indexis.index !== -1) {
+            if(indexis.type === "drop") {
+                if(DAD.elem.drag[indexis.index].end !== undefined){
+                    DAD.elem.drag[indexis.index].end(null, err);
+                }
+            }else {
+                if(DAD.elem.file[indexis.index].end !== undefined){
+                    DAD.elem.file[indexis.index].end(null, err);
+                }
+            }
+        }
+    })) {
+        return false;
     }
 
     let multiple = getTypeMultiple(element);
@@ -199,6 +244,8 @@ const addFile = (event, element, type) =>
             }
         });
     }
+
+    return true;
 };
 
 const previewFile = (file, type, inputName, multiple, count = 0) =>
