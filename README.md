@@ -4,6 +4,14 @@
 
 <img src="./example.png" width="500" alt="Drop file here draggable file upload" />
 
+### Package connection
+
+    <script type="text/javascript" src="***Path of javascript***"></script>
+
+    1. Your Path + /draganddrop.js
+    or
+    2. Your Path + /draganddrop.min.js
+
 ### html
 
     <label for="addFile" class="choose-file" data-content="Choose a File" multiple="true"></label>
