@@ -1,0 +1,65 @@
+* {
+  padding: 0;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.parent {
+  width: 100%;
+  height: 100vh;
+  background-color: #FFFFFF;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.parent .parent-dragable {
+  width: 100%;
+  max-width: 500px;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+}
+
+.parent .parent-dragable .input-label {
+  padding: 7px;
+  border: 1px dashed #11998E;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 900;
+  -webkit-transition: background-color 300ms linear;
+  transition: background-color 300ms linear;
+}
+
+.parent .parent-dragable .input-label.dragover {
+  background-color: #77D4D4;
+}
+
+.parent .parent-dragable .input-label .drag-title {
+  font-size: 27px;
+  font-weight: 700;
+  color: #4BC08B;
+  text-align: center;
+  display: inline;
+  padding: 0 7px;
+}
+
+.parent .parent-dragable .input-file {
+  display: none;
+}
+/*# sourceMappingURL=style.css.map */
