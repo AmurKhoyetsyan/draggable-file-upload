@@ -1,0 +1,38 @@
+*
+    padding: 0
+    margin: 0
+    box-sizing: border-box
+
+.parent
+    width: 100%
+    height: 100vh
+    background-color: #FFFFFF
+    display: flex
+    flex-direction: row
+    flex-wrap: nowrap
+    justify-content: center
+    align-items: center
+    .parent-dragable
+        width: 100%
+        max-width: 500px
+        height: max-content
+        .input-label 
+            padding: 7px
+            border: 1px dashed #11998E
+            display: block
+            width: 100%
+            text-align: center
+            font-size: 16px
+            font-weight: 900
+            transition: background-color 300ms linear
+            &.dragover
+                background-color: #77D4D4
+            .drag-title
+                font-size: 27px
+                font-weight: 700
+                color: #4BC08B
+                text-align: center
+                display: inline
+                padding: 0 7px
+        .input-file
+            display: none

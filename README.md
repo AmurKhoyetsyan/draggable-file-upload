@@ -2,7 +2,7 @@
 
 ## Example
 
-<img src="./example.png" width="500" alt="Drop file here draggable file upload" />
+<img src="./img/example.png" width="500" alt="Drop file here draggable file upload" />
 
 ### Package connection
 
@@ -44,10 +44,10 @@
         }
     });
 
-<img src="./example1.png" width="500" alt="Drop file here draggable file upload" />
+<img src="./img/example1.png" width="500" alt="Drop file here draggable file upload" />
 
 When we bring the file closer to the installation area a new class is added to the installation section called ***"dragover"***, with which we can shape the installation area․
 
-<img src="./example2.png" width="500" alt="Drop file here draggable file upload" />
+<img src="./img/example2.png" width="500" alt="Drop file here draggable file upload" />
 
     DAD.draggableContex(document.querySelectorAll(".navbar"));
