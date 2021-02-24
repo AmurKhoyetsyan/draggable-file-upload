@@ -1,13 +1,13 @@
 /***********************************************************************
- * 
+ *
  * Copyright (c) 2020 Amur Khoyetsyan
- * 
+ *
  * The MIT License (MIT)
- * 
+ *
  * When we bring the file closer to the installation area
  * a new class is added to the installation section called "dragover",
  * with which we can shape the installation area․
- * 
+ *
  ************************************************************************/
 
 let DAD = {
@@ -42,14 +42,14 @@ const isEmpty = (elem, callback) => {
     }
 
     try {
-       let keys = Object.keys(elem);
+        let keys = Object.keys(elem);
 
-       if(keys.length === 0) {
+        if(keys.length === 0) {
             callback(new Error("Not a File"));
-           return true;
-       }
+            return true;
+        }
 
-       return false;
+        return false;
     }catch (error) {
         callback(new TypeError('Is not a array or object'));
     }
@@ -106,7 +106,7 @@ const dragover = (event, tag = null) =>
 const getElemName = elem =>
 {
     let name = {};
-    
+
     name.id = elem.hasAttribute("id") ? elem.getAttribute("id") : null;
     name.name = elem.hasAttribute("name") ? elem.getAttribute("name") : null;
     name.classes = elem.hasAttribute("class") ? elem.getAttribute("class") : null;
@@ -171,7 +171,7 @@ const addFile = (event, element, type) =>
             }
         }
     }
-    
+
     DAD.file = [];
     DAD.data.files = [];
 
@@ -212,7 +212,7 @@ const addFile = (event, element, type) =>
                             DAD.elem.drag[indexis.index].input.files = new FileListItem(DAD.file[0]);
                         }
                     }
-                    
+
                     if(DAD.elem.drag[indexis.index].end !== undefined){
                         DAD.elem.drag[indexis.index].end(res, null);
                     }
@@ -306,13 +306,13 @@ const getTypeMultiple = elem => {
 const getAllTabsByParent = tag =>
 {
     let all = tag.getElementsByTagName("*");
-    for(elemnt of all) {
-        elemnt.addEventListener('dragenter', (event) => dragenter(event, tag), false);
-        elemnt.addEventListener('dragover', (event) =>  dragover(event, tag), false);  
+    for(let element of all) {
+        element.addEventListener('dragenter', (event) => dragenter(event, tag), false);
+        element.addEventListener('dragover', (event) =>  dragover(event, tag), false);
     }
 };
 
-const elemAddEventDraged = element =>
+const elemAddEventDragged = element =>
 {
     getAllTabsByParent(element);
     element.addEventListener('dragenter', dragenter, false);
@@ -324,18 +324,18 @@ const elemAddEventDraged = element =>
     }, false);
 };
 
-DAD.dragedUpload = (props = defaultProps) =>
+DAD.draggedUpload = (props = defaultProps) =>
 {
     let elem = props.element;
     if(elem !== null && isNodelist(elem)) {
-        for(element of elem) {
+        for(let element of elem) {
             DAD.elem.drag.push({
                 elem: element,
                 input: props.input ? props.input : null,
                 start: props.start ? props.start : undefined,
                 end: props.end ? props.end : undefined
             });
-            elemAddEventDraged(element);
+            elemAddEventDragged(element);
         }
     }else if(elem !== null) {
         DAD.elem.drag.push({
@@ -344,7 +344,7 @@ DAD.dragedUpload = (props = defaultProps) =>
             start: props.start ? props.start : undefined,
             end: props.end ? props.end : undefined
         });
-        elemAddEventDraged(elem);
+        elemAddEventDragged(elem);
     }
 };
 
@@ -352,7 +352,7 @@ DAD.fileChange = (props = defaultProps) =>
 {
     let elem = props.element;
     if(elem !== null && isNodelist(elem)) {
-        for(element of elem) {
+        for(let element of elem) {
             DAD.elem.file.push({
                 elem: element,
                 input: props.input ? props.input : null,
@@ -392,7 +392,7 @@ const dragContext = event =>
 
             item.cords.startX = event.pageX;
             item.cords.startY = event.pageY;
-            
+
             item.node.style["zIndex"] = "100";
             item.node.style["top"] = `${item.cords.endY}px`;
             item.node.style["left"] = `${item.cords.endX}px`;
@@ -429,20 +429,20 @@ const addEventDragAndDrop = () =>
             item.cords.startY = event.pageY;
             item.cords.endX = x;
             item.cords.endY = y;
-            
+
             item.node.addEventListener("mousemove", dragContext, false);
         });
-        
+
         item.node.addEventListener("mouseup", event => {
             item.node.removeEventListener("mousemove", dragContext, false);
         }, false);
     });
 };
 
-DAD.draggableContex = elem =>
+DAD.draggableContext = elem =>
 {
     if(elem !== null && isNodelist(elem)) {
-        for(item of elem) {
+        for(let item of elem) {
             addInObյect(item);
         }
     }else if(elem !== null) {

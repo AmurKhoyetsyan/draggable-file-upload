@@ -19,7 +19,7 @@
 
 ### javascript
 
-    DAD.dragedUpload({
+    DAD.draggedUpload({
         element: document.querySelectorAll(".choose-file"),
         input: document.querySelector(".input-file"),
         start: () => console.log("Start"),
@@ -50,4 +50,4 @@ When we bring the file closer to the installation area a new class is added to t
 
 <img src="./img/example2.png" width="500" alt="Drop file here draggable file upload" />
 
-    DAD.draggableContex(document.querySelectorAll(".navbar"));
+    DAD.draggableContext(document.querySelectorAll(".navbar"));

@@ -1,5 +1,5 @@
 ;(function(){
-    DAD.dragedUpload({
+    DAD.draggedUpload({
         element: document.querySelectorAll(".input-label"),
         input: document.querySelector(".input-file"),
         start: () => console.log("Start"),
