@@ -402,7 +402,7 @@ const dragContext = event =>
     });
 };
 
-const addInObյect = elem =>
+const addInObject = elem =>
 {
     elem.style["position"] = "fixed";
     elem.style["zIndex"] = "99";
@@ -443,10 +443,10 @@ DAD.draggableContext = elem =>
 {
     if(elem !== null && isNodelist(elem)) {
         for(let item of elem) {
-            addInObյect(item);
+            addInObject(item);
         }
     }else if(elem !== null) {
-        addInObյect(elem);
+        addInObject(elem);
     }
 
     if(elem !== null) {
