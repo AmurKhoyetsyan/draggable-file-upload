@@ -10,6 +10,129 @@
  *
  ************************************************************************/
 
+let Chunk = {};
+
+let params = {
+    chunkSize: 1000000,
+    url: null,
+    file: null,
+    uniqueID: true,
+    uniqueIDLen: 10,
+    keys: {
+        key: "file",
+        end: 'end',
+        order: 'order'
+    },
+    form: [],
+    headers: {
+        "Content-type": "multipart/form-data"
+    }
+};
+
+Chunk.params = params;
+
+const setParams = props => {
+    for(let key in props) {
+        Chunk.params[key] = props[key];
+    }
+}
+
+const generateUniqueID = (len = 10, str = '') => {
+    str += Math.random().toString(36).substr(2, 9);
+    if(str.length > len) {
+        return str.substr(0, len);
+    }else if(str.length === len) {
+        return str;
+    }else {
+        return generateUniqueID(len, str);
+    }
+};
+
+//{
+// let oReq = new XMLHttpRequest();
+// oReq.upload.addEventListener("progress", updateProgress);
+// oReq.open("POST", params.url, true);
+// let blobEnd = end-1;
+// let contentRange = "bytes "+ start+"-"+ blobEnd+"/"+file.size;
+// oReq.setRequestHeader("Content-Range",contentRange);
+// console.log("Content-Range", contentRange);
+//
+//
+// }
+
+const fileUploader = (chunks) => {
+    console.log(chunks);
+
+    let req = new XMLHttpRequest();
+
+    let header = Chunk.params.headers;
+
+    req.open('POST', Chunk.params.url);
+    for(let key in header) {
+        req.setRequestHeader(key, header[key]);
+    }
+    req.send(chunks[0]);
+
+    req.loaded = event => {
+        chunks.shift();
+        if(chunks.length > 0) {
+            fileUploader(chunks);
+        }
+    };
+
+    req.onerror = err => new TypeError(err);
+};
+
+const createChunk = (file, count, start = 0, counter = 1, chunks = []) => {
+    let params = Chunk.params;
+    let chunkEnd = Math.min(start + params.chunkSize, file.size);
+    let chunk = file.slice(start, chunkEnd);
+
+    let chunkForm = new FormData();
+    let end = count === counter;
+
+    chunkForm.append(params.keys.key, chunk);
+    chunkForm.append(params.keys.order, counter);
+    chunkForm.append(params.keys.end, end);
+
+    params.form.forEach(item => {
+        chunkForm.append(item.key, item.value);
+    });
+
+    chunks.push(chunkForm);
+
+    if(!end) {
+        counter++;
+        return createChunk(file, count, end, counter, chunks);
+    }
+
+    fileUploader(chunks, chunkForm, chunkEnd);
+};
+
+Chunk.uploader = options => {
+    setParams(options);
+
+    let file = options.file;
+
+    if(file !== null) {
+        let numberOfChunk = Math.ceil(file.size / Chunk.params.chunkSize);
+        if(Chunk.params.uniqueID) {
+            Chunk.params.form.push({
+                key: 'uuid',
+                value: generateUniqueID(Chunk.params.uniqueIDLen)
+            });
+        }
+
+        createChunk(file, numberOfChunk, 0);
+    }else {
+        return new TypeError('Change File');
+    }
+};
+
+/**
+ * Drag And Drop File Upload
+ */
+
 let DAD = {
     name: "Drag And Drop",
     elem: {
