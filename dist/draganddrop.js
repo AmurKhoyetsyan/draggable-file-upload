@@ -80,7 +80,7 @@ const fileUploader = chunks => {
         req.send(chunks[0]);
 
         req.onload = event => {
-            resolve({chunks: chunks, event: event});
+            resolve({chunks: chunks, event: event.currentTarget});
         };
 
         req.onerror = err => {
@@ -96,7 +96,7 @@ const uploadChunks = chunks => {
             uploadChunks(res.chunks);
         }else {
             if(Chunk.params.end !== null) {
-                let currentTarget = res.event.currentTarget;
+                let currentTarget = res.event;
                 Chunk.params.end({
                     response: JSON.parse(currentTarget.response),
                     statusText: currentTarget.statusText,
@@ -131,7 +131,7 @@ const createChunk = (file, count, start = 0, counter = 1, chunks = []) => {
 
     if(!end) {
         counter++;
-        return createChunk(file, count, end, counter, chunks);
+        return createChunk(file, count, chunkEnd, counter, chunks);
     }
 
     uploadChunks(chunks);
