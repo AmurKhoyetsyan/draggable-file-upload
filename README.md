@@ -51,3 +51,24 @@ When we bring the file closer to the installation area a new class is added to t
 <img src="./img/example2.png" width="500" alt="Drop file here draggable file upload" />
 
     DAD.draggableContext(document.querySelectorAll(".navbar"));
+
+### Chunker
+
+    Chunk.uploader({
+        chunkSize: 1000000,
+        url: URL,
+        file: file,
+        uniqueIDLen: 20,
+        keys: {
+            key: "file",
+            end: 'end',
+            order: 'order'
+        },
+        form: [],
+        headers: {
+            "Authorization" : token
+        },
+        start: () => console.log('started upload'),
+        end: (res) => console.log('finished', res),
+        onError: (err) => console.log('error', err)
+    });
