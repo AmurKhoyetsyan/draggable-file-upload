@@ -11,7 +11,16 @@
  ************************************************************************/
 
 let Chunk = {
-    name: 'Chunk Uploader'
+    name: 'Chunk Uploader',
+    file: {},
+    inProcess: null,
+    completed: function() {
+        let completed = this.file.numberOfChunk - this.inProcess;
+        return {
+            chunks: (100 * completed) / this.file.numberOfChunk,
+            one: 100 / this.file.numberOfChunk
+        };
+    }
 };
 
 let params = {
@@ -31,7 +40,8 @@ let params = {
     },
     start: null,
     end: null,
-    onError: null
+    onError: null,
+    progress: null
 };
 
 Chunk.params = params;
@@ -53,22 +63,26 @@ const generateUniqueID = (len = 10, str = '') => {
     }
 };
 
-//{
-// let oReq = new XMLHttpRequest();
-// oReq.upload.addEventListener("progress", updateProgress);
-// oReq.open("POST", params.url, true);
-// let blobEnd = end-1;
-// let contentRange = "bytes "+ start+"-"+ blobEnd+"/"+file.size;
-// oReq.setRequestHeader("Content-Range",contentRange);
-// console.log("Content-Range", contentRange);
-//
-//
-// }
+const updateProgress = event => {
+    if (event.lengthComputable) {
+        let percentComplete = Math.round(event.loaded / event.total * 100);
+
+        let completed = Chunk.completed();
+
+        let completedPercent = completed.chunks + ((completed.one * percentComplete) / 100);
+
+        if (Chunk.params.progress !== null) {
+            Chunk.params.progress(completedPercent);
+        }
+    }
+};
 
 const fileUploader = chunks => {
     let req = new XMLHttpRequest();
 
     let header = Chunk.params.headers;
+
+    req.upload.addEventListener("progress", updateProgress);
 
     req.open('POST', Chunk.params.url);
 
@@ -92,16 +106,21 @@ const fileUploader = chunks => {
 const uploadChunks = chunks => {
     fileUploader(chunks).then(res => {
         res.chunks.shift();
+        Chunk.inProcess = res.chunks.length;
         if(res.chunks.length > 0) {
             uploadChunks(res.chunks);
         }else {
             if(Chunk.params.end !== null) {
                 let currentTarget = res.event;
-                Chunk.params.end({
-                    response: JSON.parse(currentTarget.response),
-                    statusText: currentTarget.statusText,
-                    status: currentTarget.status,
-                });
+                try{
+                    Chunk.params.end({
+                        response: JSON.parse(currentTarget.response),
+                        statusText: currentTarget.statusText,
+                        status: currentTarget.status,
+                    });
+                }catch (err) {
+                    Chunk.params.onError(err);
+                }
             }
         }
     }).catch(err => {
@@ -111,13 +130,13 @@ const uploadChunks = chunks => {
     });
 }
 
-const createChunk = (file, count, start = 0, counter = 1, chunks = []) => {
+const createChunk = (file, start = 0, counter = 1, chunks = []) => {
     let params = Chunk.params;
     let chunkEnd = Math.min(start + params.chunkSize, file.size);
     let chunk = file.slice(start, chunkEnd);
 
     let chunkForm = new FormData();
-    let end = count === counter;
+    let end = Chunk.file.numberOfChunk === counter;
 
     chunkForm.append(params.keys.key, chunk);
     chunkForm.append(params.keys.order, counter);
@@ -131,8 +150,10 @@ const createChunk = (file, count, start = 0, counter = 1, chunks = []) => {
 
     if(!end) {
         counter++;
-        return createChunk(file, count, chunkEnd, counter, chunks);
+        return createChunk(file, chunkEnd, counter, chunks);
     }
+
+    Chunk.inProcess = counter;
 
     uploadChunks(chunks);
 };
@@ -147,7 +168,10 @@ Chunk.uploader = options => {
             if(Chunk.params.start !== null) {
                 Chunk.params.start();
             }
-            let numberOfChunk = Math.ceil(file.size / Chunk.params.chunkSize);
+
+            Chunk.file.fileSize = file.size;
+            Chunk.file.numberOfChunk = Math.ceil(file.size / Chunk.params.chunkSize);
+
             if(Chunk.params.uniqueID) {
                 Chunk.params.form.push({
                     key: 'uuid',
@@ -155,7 +179,7 @@ Chunk.uploader = options => {
                 });
             }
 
-            createChunk(file, numberOfChunk, 0);
+            createChunk(file);
         }catch (err) {
             if(Chunk.params.onError !== null) {
                 Chunk.params.onError(err);
@@ -167,10 +191,6 @@ Chunk.uploader = options => {
         }
     }
 };
-
-/**
- * Drag And Drop File Upload
- */
 
 let DAD = {
     name: "Drag And Drop",
