@@ -165,8 +165,6 @@ const createChunk = file => {
         return chunkForm;
     });
 
-    console.log(chunks);
-
     Chunk.inProcess = order;
 
     uploadChunks(chunks);
