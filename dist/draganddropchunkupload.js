@@ -27,14 +27,13 @@ let params = {
     chunkSize: 1000000,
     url: null,
     file: null,
-    uniqueID: true,
-    uniqueIDLen: 10,
+    uniqueID: false,
     keys: {
         key: "file",
         end: 'end',
         order: 'order'
     },
-    form: [],
+    form: {},
     headers: {
         "Content-type": "multipart/form-data"
     },
@@ -98,7 +97,7 @@ const fileUploader = chunks => {
         };
 
         req.onerror = err => {
-            reject(new TypeError(err));
+            reject(err);
         };
     });
 };
@@ -130,33 +129,50 @@ const uploadChunks = chunks => {
     });
 }
 
-const createChunk = (file, start = 0, counter = 1, chunks = []) => {
-    let params = Chunk.params;
-    let chunkEnd = Math.min(start + params.chunkSize, file.size);
+const getChunks = (file, chunkSize = 1000000, start = 0, counter = 1, chunks = []) => {
+    let chunkEnd = Math.min(start + chunkSize, file.size);
     let chunk = file.slice(start, chunkEnd);
 
-    let chunkForm = new FormData();
-    let end = Chunk.file.numberOfChunk === counter;
+    let end = Math.ceil(file.size / chunkSize) === counter;
 
-    chunkForm.append(params.keys.key, chunk);
-    chunkForm.append(params.keys.order, counter);
-    chunkForm.append(params.keys.end, end);
-
-    params.form.forEach(item => {
-        chunkForm.append(item.key, item.value);
-    });
-
-    chunks.push(chunkForm);
+    chunks.push(chunk);
 
     if(!end) {
         counter++;
-        return createChunk(file, chunkEnd, counter, chunks);
+        return getChunks(file, chunkSize, chunkEnd, counter, chunks);
     }
 
-    Chunk.inProcess = counter;
+    return chunks;
+};
+
+const createChunk = file => {
+    let params = Chunk.params;
+    let form = params.form;
+    let blobs = getChunks(file, params.chunkSize);
+    let order = 0;
+    let chunks = blobs.map((chunk, index) => {
+        let chunkForm = new FormData();
+        order = index + 1;
+
+        chunkForm.append(params.keys.key, chunk);
+        chunkForm.append(params.keys.order, order);
+        chunkForm.append(params.keys.end, Chunk.file.numberOfChunk === order);
+
+        for(let key in form) {
+            chunkForm.append(key, form[key]);
+        }
+
+        return chunkForm;
+    });
+
+    console.log(chunks);
+
+    Chunk.inProcess = order;
 
     uploadChunks(chunks);
 };
+
+Chunk.getChunks = getChunks;
 
 Chunk.uploader = options => {
     setParams(options);
@@ -173,10 +189,7 @@ Chunk.uploader = options => {
             Chunk.file.numberOfChunk = Math.ceil(file.size / Chunk.params.chunkSize);
 
             if(Chunk.params.uniqueID) {
-                Chunk.params.form.push({
-                    key: 'uuid',
-                    value: generateUniqueID(Chunk.params.uniqueIDLen)
-                });
+                Chunk.params.form.uuid = generateUniqueID(Chunk.params.uniqueID);
             }
 
             createChunk(file);
