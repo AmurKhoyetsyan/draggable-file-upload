@@ -23,14 +23,13 @@ let params = {
     chunkSize: 1000000,
     url: null,
     file: null,
-    uniqueID: true,
-    uniqueIDLen: 10,
+    uniqueID: false,
     keys: {
         key: "file",
         end: 'end',
         order: 'order'
     },
-    form: [],
+    form: {},
     headers: {
         "Content-type": "multipart/form-data"
     },
@@ -94,7 +93,7 @@ const fileUploader = chunks => {
         };
 
         req.onerror = err => {
-            reject(new TypeError(err));
+            reject(err);
         };
     });
 };
@@ -138,9 +137,11 @@ const createChunk = (file, start = 0, counter = 1, chunks = []) => {
     chunkForm.append(params.keys.order, counter);
     chunkForm.append(params.keys.end, end);
 
-    params.form.forEach(item => {
-        chunkForm.append(item.key, item.value);
-    });
+    let form = params.form;
+
+    for(let key in form) {
+        chunkForm.append(key, form[key]);
+    }
 
     chunks.push(chunkForm);
 
@@ -169,10 +170,7 @@ Chunk.uploader = options => {
             Chunk.file.numberOfChunk = Math.ceil(file.size / Chunk.params.chunkSize);
 
             if(Chunk.params.uniqueID) {
-                Chunk.params.form.push({
-                    key: 'uuid',
-                    value: generateUniqueID(Chunk.params.uniqueIDLen)
-                });
+                Chunk.params.form.uuid = generateUniqueID(Chunk.params.uniqueID);
             }
 
             createChunk(file);

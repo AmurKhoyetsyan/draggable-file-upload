@@ -54,21 +54,25 @@ When we bring the file closer to the installation area a new class is added to t
 
 ### Chunker
 
+    let imageId = 10;
     Chunk.uploader({
         chunkSize: 1000000,
-        url: URL,
-        file: file,
-        uniqueIDLen: 20,
+        url: "your_url",
+        file: res.files[0].file,
+        uniqueID: 20, // or false
         keys: {
             key: "file",
             end: 'end',
             order: 'order'
         },
-        form: [],
+        form: {
+            'imageId': imageId
+        },
         headers: {
-            "Authorization" : token
+            "Authorization" : "your_token" 
         },
         start: () => console.log('started upload'),
-        end: (res) => console.log('finished', res),
-        onError: (err) => console.log('error', err)
+        end: res => console.log('finished', res),
+        onError: err => console.log('error', err),
+        progress: percent => console.log(percent)
     });
