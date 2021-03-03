@@ -54,6 +54,8 @@ When we bring the file closer to the installation area a new class is added to t
 
 ### Chunker
 
+#### FileUpload
+
     let imageId = 10;
     Chunk.uploader({
         chunkSize: 1000000,
@@ -76,3 +78,7 @@ When we bring the file closer to the installation area a new class is added to t
         onError: err => console.log('error', err),
         progress: percent => console.log(percent)
     });
+
+#### Get Chunks
+
+    Chunk.getChunks(res.files[0].file)
