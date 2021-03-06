@@ -14,13 +14,13 @@
 
 ### html
 
-    <label for="addFile" class="choose-file" data-content="Choose a File" multiple="true"></label>
+    <label for="addFile" class="input-label" data-content="Choose a File" multiple="true"></label>
     <input type="file" id="addFile" class="input-file" multiple="false" />
 
 ### javascript
 
     DAD.draggedUpload({
-        element: document.querySelectorAll(".choose-file"),
+        element: document.querySelectorAll(".input-label"),
         input: document.querySelector(".input-file"),
         start: () => console.log("Start"),
         end: (res, err) => {
@@ -52,7 +52,7 @@ When we bring the file closer to the installation area a new class is added to t
 
     DAD.draggableContext(document.querySelectorAll(".navbar"));
 
-### Chunker
+### Chunk Upload Example
 
 #### FileUpload
 
@@ -81,4 +81,4 @@ When we bring the file closer to the installation area a new class is added to t
 
 #### Get Chunks
 
-    Chunk.getChunks(res.files[0].file)
+    Chunk.getChunks(res.files[0].file);
