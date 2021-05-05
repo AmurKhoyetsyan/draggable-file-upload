@@ -10,6 +10,9 @@
  *
  ************************************************************************/
 
+/**
+ * @type {{elem: {file: [], draggable: [], drag: []}, file: null, data: {name: string, files: []}, name: string}}
+ */
 let DAD = {
     name: "Drag And Drop",
     elem: {
@@ -24,6 +27,9 @@ let DAD = {
     }
 };
 
+/**
+ * @type {{input: null, start: undefined, end: undefined, element: null}}
+ */
 let defaultProps = {
     element: null,
     input: null,
@@ -31,6 +37,11 @@ let defaultProps = {
     end: undefined
 };
 
+/**
+ * @param elem
+ * @param callback
+ * @returns {boolean}
+ */
 const isEmpty = (elem, callback) => {
     if(Array.isArray(elem)) {
         if(elem.length === 0) {
@@ -57,18 +68,29 @@ const isEmpty = (elem, callback) => {
     return false;
 };
 
+/**
+ * @param event
+ * @param tag
+ */
 const addClass = (event, tag) =>
 {
     if(tag !== null && DAD.elem.drag !== null) {
-        DAD.elem.drag.forEach( item => {
+        DAD.elem.drag.forEach( (item, index) => {
             if(item.elem === tag) {
+                if(DAD.elem.drag[index].dragover === 1){
+                    DAD.elem.drag[index].dragover = 2;
+                    DAD.elem.drag[index].dragenter(index);
+                }
                 !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
                 return true;
             }
         });
     }else if(DAD.elem.drag !== null){
-        DAD.elem.drag.forEach( item => {
+        DAD.elem.drag.forEach( (item, index) => {
             if(item.elem === event.target) {
+                if(DAD.elem.drag[index].dragover === 2){
+                    DAD.elem.drag[index].dragleave(index);
+                }
                 !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
                 return true;
             }
@@ -76,6 +98,9 @@ const addClass = (event, tag) =>
     }
 };
 
+/**
+ * @param event
+ */
 const removeClass = event =>
 {
     if(DAD.elem.drag !== null){
@@ -85,24 +110,39 @@ const removeClass = event =>
     }
 };
 
+/**
+ * @param event
+ * @param tag
+ */
 const dragenter = (event, tag = null) =>
 {
     event.preventDefault();
     addClass(event, tag);
 };
 
+/**
+ * @param event
+ */
 const dragleave = event =>
 {
     event.preventDefault();
     removeClass(event);
 };
 
+/**
+ * @param event
+ * @param tag
+ */
 const dragover = (event, tag = null) =>
 {
     event.preventDefault();
     addClass(event, tag);
 };
 
+/**
+ * @param elem
+ * @returns {{}}
+ */
 const getElemName = elem =>
 {
     let name = {};
@@ -116,6 +156,11 @@ const getElemName = elem =>
     return name;
 };
 
+/**
+ * @param files
+ * @returns {FileList}
+ * @constructor
+ */
 function FileListItem(files) {
     files = [].slice.call(Array.isArray(files) ? files : arguments);
     for (var count, arrCount = count = files.length, item = true; arrCount-- && item;) item = files[arrCount] instanceof File;
@@ -124,6 +169,11 @@ function FileListItem(files) {
     return arrCount.files;
 };
 
+/**
+ * @param elem
+ * @param type
+ * @returns {{index: number, type: string}}
+ */
 const getIndex = (elem, type) => {
     let indexis = {
         index: -1,
@@ -156,6 +206,12 @@ const getIndex = (elem, type) => {
     return indexis;
 };
 
+/**
+ * @param event
+ * @param element
+ * @param type
+ * @returns {boolean}
+ */
 const addFile = (event, element, type) =>
 {
     let indexis = getIndex(element, type);
@@ -248,6 +304,14 @@ const addFile = (event, element, type) =>
     return true;
 };
 
+/**
+ * @param file
+ * @param type
+ * @param inputName
+ * @param multiple
+ * @param count
+ * @returns {Promise<unknown>}
+ */
 const previewFile = (file, type, inputName, multiple, count = 0) =>
 {
     let reader = new FileReader();
@@ -289,10 +353,22 @@ const previewFile = (file, type, inputName, multiple, count = 0) =>
     });
 };
 
-const isNodelist = tags => typeof tags.length !== "undefined" && typeof tags.item !== "undefined";
+/**
+ * @param tags
+ * @returns {boolean|boolean}
+ */
+const isNodeList = tags => typeof tags.length !== "undefined" && typeof tags.item !== "undefined";
 
+/**
+ * @param text
+ * @returns {boolean}
+ */
 const toBoolean = text => text === "true";
 
+/**
+ * @param elem
+ * @returns {boolean}
+ */
 const getTypeMultiple = elem => {
     let multiple = false;
 
@@ -303,6 +379,9 @@ const getTypeMultiple = elem => {
     return multiple;
 };
 
+/**
+ * @param tag
+ */
 const getAllTabsByParent = tag =>
 {
     let all = tag.getElementsByTagName("*");
@@ -312,6 +391,9 @@ const getAllTabsByParent = tag =>
     }
 };
 
+/**
+ * @param element
+ */
 const elemAddEventDragged = element =>
 {
     getAllTabsByParent(element);
@@ -324,14 +406,20 @@ const elemAddEventDragged = element =>
     }, false);
 };
 
+/**
+ * @param props
+ */
 DAD.draggedUpload = (props = defaultProps) =>
 {
     let elem = props.element;
-    if(elem !== null && isNodelist(elem)) {
+    if(elem !== null && isNodeList(elem)) {
         for(let element of elem) {
             DAD.elem.drag.push({
                 elem: element,
                 input: props.input ? props.input : null,
+                dragenter: props.dragenter ? props.dragenter : undefined,
+                dragleave: props.dragleave ? props.dragleave : undefined,
+                dragover: props.dragenter && props.dragleave ? 1 : 0,
                 start: props.start ? props.start : undefined,
                 end: props.end ? props.end : undefined
             });
@@ -341,6 +429,9 @@ DAD.draggedUpload = (props = defaultProps) =>
         DAD.elem.drag.push({
             elem: elem,
             input: props.input ? props.input : null,
+            dragenter: props.dragenter ? props.dragenter : undefined,
+            dragleave: props.dragleave ? props.dragleave : undefined,
+            dragover: props.dragenter && props.dragleave ? 1 : 0,
             start: props.start ? props.start : undefined,
             end: props.end ? props.end : undefined
         });
@@ -348,10 +439,13 @@ DAD.draggedUpload = (props = defaultProps) =>
     }
 };
 
+/**
+ * @param props
+ */
 DAD.fileChange = (props = defaultProps) =>
 {
     let elem = props.element;
-    if(elem !== null && isNodelist(elem)) {
+    if(elem !== null && isNodeList(elem)) {
         for(let element of elem) {
             DAD.elem.file.push({
                 elem: element,
@@ -378,6 +472,9 @@ DAD.fileChange = (props = defaultProps) =>
     }
 };
 
+/**
+ * @param event
+ */
 const dragContext = event =>
 {
     DAD.elem.draggable.forEach( item => {
@@ -402,6 +499,9 @@ const dragContext = event =>
     });
 };
 
+/**
+ * @param elem
+ */
 const addInObject = elem =>
 {
     elem.style["position"] = "fixed";
@@ -419,6 +519,9 @@ const addInObject = elem =>
     });
 };
 
+/**
+ * void
+ */
 const addEventDragAndDrop = () =>
 {
     DAD.elem.draggable.forEach( item => {
@@ -439,9 +542,12 @@ const addEventDragAndDrop = () =>
     });
 };
 
+/**
+ * @param elem
+ */
 DAD.draggableContext = elem =>
 {
-    if(elem !== null && isNodelist(elem)) {
+    if(elem !== null && isNodeList(elem)) {
         for(let item of elem) {
             addInObject(item);
         }

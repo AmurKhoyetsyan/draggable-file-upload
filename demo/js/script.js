@@ -2,6 +2,8 @@
     DAD.draggedUpload({
         element: document.querySelectorAll(".input-label"),
         input: document.querySelector(".input-file"),
+        dragenter: index => console.log('drag enter ', index),
+        dragleave: index => console.log('drag level ', index),
         start: () => console.log("Start"),
         end: (res, err) => {
             if(err === null){

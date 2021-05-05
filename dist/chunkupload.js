@@ -6,6 +6,9 @@
  *
  ************************************************************************/
 
+/**
+ * @type {{inProcess: null, file: {}, name: string, completed: (function(): {chunks: number, one: number})}}
+ */
 let Chunk = {
     name: 'Chunk Uploader',
     file: {},
@@ -19,6 +22,9 @@ let Chunk = {
     }
 };
 
+/**
+ * @type {{headers: {"Content-type": string}, file: null, onError: null, chunkSize: number, form: {}, keys: {end: string, key: string, order: string}, start: null, progress: null, end: null, url: null, uniqueID: boolean}}
+ */
 let params = {
     chunkSize: 1000000,
     url: null,
@@ -39,14 +45,25 @@ let params = {
     progress: null
 };
 
+/**
+ * @type {{headers: {"Content-type": string}, file: null, onError: null, chunkSize: number, form: {}, keys: {end: string, key: string, order: string}, start: null, progress: null, end: null, url: null, uniqueID: boolean}}
+ */
 Chunk.params = params;
 
+/**
+ * @param props
+ */
 const setParams = props => {
     for(let key in props) {
         Chunk.params[key] = props[key];
     }
 }
 
+/**
+ * @param len
+ * @param str
+ * @returns {string}
+ */
 const generateUniqueID = (len = 10, str = '') => {
     str += Math.random().toString(36).substr(2, 9);
     if(str.length > len) {
@@ -58,6 +75,9 @@ const generateUniqueID = (len = 10, str = '') => {
     }
 };
 
+/**
+ * @param event
+ */
 const updateProgress = event => {
     if (event.lengthComputable) {
         let percentComplete = Math.round(event.loaded / event.total * 100);
@@ -72,6 +92,10 @@ const updateProgress = event => {
     }
 };
 
+/**
+ * @param chunks
+ * @returns {Promise<unknown>}
+ */
 const fileUploader = chunks => {
     let req = new XMLHttpRequest();
 
@@ -98,6 +122,9 @@ const fileUploader = chunks => {
     });
 };
 
+/**
+ * @param chunks
+ */
 const uploadChunks = chunks => {
     fileUploader(chunks).then(res => {
         res.chunks.shift();
@@ -125,6 +152,14 @@ const uploadChunks = chunks => {
     });
 }
 
+/**
+ * @param file
+ * @param chunkSize
+ * @param start
+ * @param counter
+ * @param chunks
+ * @returns {*[]}
+ */
 const getChunks = (file, chunkSize = 1000000, start = 0, counter = 1, chunks = []) => {
     let chunkEnd = Math.min(start + chunkSize, file.size);
     let chunk = file.slice(start, chunkEnd);
@@ -141,6 +176,9 @@ const getChunks = (file, chunkSize = 1000000, start = 0, counter = 1, chunks = [
     return chunks;
 };
 
+/**
+ * @param file
+ */
 const createChunk = file => {
     let params = Chunk.params;
     let form = params.form;
@@ -166,8 +204,14 @@ const createChunk = file => {
     uploadChunks(chunks);
 };
 
+/**
+ * @type {getChunks}
+ */
 Chunk.getChunks = getChunks;
 
+/**
+ * @param options
+ */
 Chunk.uploader = options => {
     setParams(options);
 
