@@ -13,7 +13,7 @@
 /**
  * @type {{elem: {file: [], draggable: [], drag: []}, file: null, data: {name: string, files: []}, name: string}}
  */
-let DAD = {
+ let DAD = {
     name: "Drag And Drop",
     elem: {
         file: [],
@@ -75,21 +75,22 @@ const isEmpty = (elem, callback) => {
 const addClass = (event, tag) =>
 {
     if(tag !== null && DAD.elem.drag !== null) {
-        DAD.elem.drag.forEach( (item, index) => {
+        DAD.elem.drag.forEach((item, index) => {
             if(item.elem === tag) {
-                if(DAD.elem.drag[index].dragover === 1){
+                if(DAD.elem.drag[index].dragover === 1) {
                     DAD.elem.drag[index].dragover = 2;
-                    DAD.elem.drag[index].dragenter(index);
+                    DAD.elem.drag[index].dragenter(item.elem, index);
                 }
                 !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
                 return true;
             }
         });
-    }else if(DAD.elem.drag !== null){
+    }else if(DAD.elem.drag !== null) {
         DAD.elem.drag.forEach( (item, index) => {
             if(item.elem === event.target) {
-                if(DAD.elem.drag[index].dragover === 2){
-                    DAD.elem.drag[index].dragleave(index);
+                if(DAD.elem.drag[index].dragover === 1) {
+                    DAD.elem.drag[index].dragover = 2;
+                    DAD.elem.drag[index].dragleave(item.elem, index);
                 }
                 !item.elem.classList.contains("dragover") && item.elem.classList.add("dragover");
                 return true;
@@ -103,9 +104,14 @@ const addClass = (event, tag) =>
  */
 const removeClass = event =>
 {
-    if(DAD.elem.drag !== null){
-        DAD.elem.drag.forEach( item => {
+    if(DAD.elem.drag !== null) {
+        DAD.elem.drag.forEach((item, index) => {
+            if(DAD.elem.drag[index].dragover === 2) {
+                DAD.elem.drag[index].dragover = 1;
+                DAD.elem.drag[index].dragleave(item.elem, index);
+            }
             item.elem.classList.contains("dragover") && item.elem.classList.remove("dragover");
+            return true;
         });
     }
 };
@@ -218,11 +224,15 @@ const addFile = (event, element, type) =>
 
     if(indexis.index !== -1) {
         if(indexis.type === "drop") {
-            if(DAD.elem.drag[indexis.index].start !== undefined){
+            if(DAD.elem.drag[indexis.index].dragover === 2) {
+                DAD.elem.drag[indexis.index].dragover = 1;
+                DAD.elem.drag[indexis.index].dragleave(element, indexis.index);
+            }
+            if(DAD.elem.drag[indexis.index].start !== undefined) {
                 DAD.elem.drag[indexis.index].start();
             }
         }else {
-            if(DAD.elem.file[indexis.index].start !== undefined){
+            if(DAD.elem.file[indexis.index].start !== undefined) {
                 DAD.elem.file[indexis.index].start();
             }
         }
@@ -233,7 +243,7 @@ const addFile = (event, element, type) =>
 
     removeClass(event);
 
-    if(type === "drop"){
+    if(type === "drop") {
         DAD.file = event.dataTransfer.files;
     }else {
         DAD.file = event.target.files;
@@ -242,11 +252,11 @@ const addFile = (event, element, type) =>
     if(isEmpty(DAD.file, (err) => {
         if(indexis.index !== -1) {
             if(indexis.type === "drop") {
-                if(DAD.elem.drag[indexis.index].end !== undefined){
+                if(DAD.elem.drag[indexis.index].end !== undefined) {
                     DAD.elem.drag[indexis.index].end(null, err);
                 }
             }else {
-                if(DAD.elem.file[indexis.index].end !== undefined){
+                if(DAD.elem.file[indexis.index].end !== undefined) {
                     DAD.elem.file[indexis.index].end(null, err);
                 }
             }
@@ -262,26 +272,26 @@ const addFile = (event, element, type) =>
             if(indexis.index !== -1) {
                 if(indexis.type === "drop") {
                     if(DAD.elem.drag[indexis.index].input !== null) {
-                        if(multiple){
+                        if(multiple) {
                             DAD.elem.drag[indexis.index].input.files = new FileListItem([...DAD.file]);
                         }else {
                             DAD.elem.drag[indexis.index].input.files = new FileListItem(DAD.file[0]);
                         }
                     }
 
-                    if(DAD.elem.drag[indexis.index].end !== undefined){
+                    if(DAD.elem.drag[indexis.index].end !== undefined) {
                         DAD.elem.drag[indexis.index].end(res, null);
                     }
                 }else {
                     if(DAD.elem.file[indexis.index].input !== null) {
-                        if(multiple){
+                        if(multiple) {
                             DAD.elem.file[indexis.index].input.files = new FileListItem([...DAD.file]);
                         }else {
                             DAD.elem.file[indexis.index].input.files = new FileListItem(DAD.file[0]);
                         }
                     }
 
-                    if(DAD.elem.file[indexis.index].end !== undefined){
+                    if(DAD.elem.file[indexis.index].end !== undefined) {
                         DAD.elem.file[indexis.index].end(res, null);
                     }
                 }
@@ -289,11 +299,11 @@ const addFile = (event, element, type) =>
         }).catch( err => {
             if(indexis.index !== -1) {
                 if(indexis.type === "drop") {
-                    if(DAD.elem.drag[indexis.index].end !== undefined){
+                    if(DAD.elem.drag[indexis.index].end !== undefined) {
                         DAD.elem.drag[indexis.index].end(null, err);
                     }
                 }else {
-                    if(DAD.elem.file[indexis.index].end !== undefined){
+                    if(DAD.elem.file[indexis.index].end !== undefined) {
                         DAD.elem.file[indexis.index].end(null, err);
                     }
                 }
@@ -389,6 +399,8 @@ const getAllTabsByParent = tag =>
         element.addEventListener('dragenter', (event) => dragenter(event, tag), false);
         element.addEventListener('dragover', (event) =>  dragover(event, tag), false);
     }
+    tag.addEventListener('dragenter', (event) => dragenter(event, tag), false);
+    tag.addEventListener('dragover', (event) =>  dragover(event, tag), false);
 };
 
 /**
@@ -478,7 +490,7 @@ DAD.fileChange = (props = defaultProps) =>
 const dragContext = event =>
 {
     DAD.elem.draggable.forEach( item => {
-        if(event.target === item.node){
+        if(event.target === item.node) {
             let stepX = 0, stepY = 0;
 
             stepX = item.cords.startX - event.pageX;
